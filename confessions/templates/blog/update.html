@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Update your reflection{% endblock %}
+
+{% block content %}
+
+<h3>Update your reflection here</h3>
+<p>
+    <form method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input value="Update" type="submit">
+</form>
+</p>
+
+{% block content %}

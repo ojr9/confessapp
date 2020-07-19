@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}New entry!{% endblock %}
+
+{% block content %}
+
+<h2>Enter a new Confession</h2>
+<p>
+<form method="post" action=".">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Register">
+</form>
+</p>
+
+
+
+{% endblock %}

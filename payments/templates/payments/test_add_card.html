@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+
+{% load staticfiles %}
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="{% static 'mangopayments/js/mangopay-kit.js' %}"></script>
+
+
+<script type="text/javascript">
+function registerCard() {
+    var resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "Proccessing ...";
+    resultDiv.style.color = "black";
+
+    mangoPay.cardRegistration.baseURL = document.getElementsByClassName('baseURL')[0].value;
+    mangoPay.cardRegistration.clientId = document.getElementsByClassName('clientId')[0].value;
+
+    resultDiv.style.color = "red";
+    // Initialize with card register data prepared on the server
+    mangoPay.cardRegistration.init({
+        cardRegistrationURL: document.getElementsByClassName('card_registration_url')[0].value,
+        preregistrationData: document.getElementsByClassName('preregistration_data')[0].value,
+        accessKey: document.getElementsByClassName('access_key')[0].value,
+        Id: document.getElementsByClassName('card_registration_id')[0].value
+    });
+    resultDiv.style.color = "green";
+    // Card data collected from the user
+    var cardData = {
+        cardNumber: document.getElementsByClassName('card_number')[0].value,
+        cardExpirationDate: document.getElementsByClassName('card_exp_date')[0].value,
+        cardCvx: document.getElementsByClassName('card_cvx')[0].value,
+        cardType: document.getElementsByClassName('card_type')[0].value,
+    };
+    resultDiv.style.color = "blue";
+    // Register card
+    mangoPay.cardRegistration.registerCard(
+            cardData,
+            function (res) {
+                var message = 'Card has been succesfully registered under the Card Id ' + res.CardId + '.<br />';
+                message += 'Card is now ready to use e.g. in a «Direct PayIn» Object.';
+                resultDiv.innerHTML = message;
+                resultDiv.style.color = "green";
+            },
+            function (res) {
+                var message = 'Error occured while registering the card.<br />';
+                message += 'Code: ' + res.ResultCode + ', message: ' + res.ResultMessage;
+                resultDiv.innerHTML = message;
+                resultDiv.style.color = "red";
+            }
+    );
+
+}
+</script>
+
+</head>
+<body>
+
+<div class="payment-errors"></div>
+<form id="payment-form" action="" method="POST">
+    {% csrf_token %}
+    <h3>Card registration data:</h3>
+    {{ card_registration_id }} <br/>
+    {{ access_key }} <br/>
+    {{ preregistration_data }} <br/>
+    {{ card_registration_URL }}
+    <div><label>Card registration ID</label>
+        <input class="card_registration_id" value={{ card_registration_id }} />
+    </div>
+    <div><label>Access key</label>
+        <input class="access_key" value={{ access_key }} />
+    </div>
+    <div><label>Preregistration data</label>
+        <input class="preregistration_data" size=80 value={{ preregistration_data }} />
+    </div>
+    <div><label>Card registration url</label>
+        <input class="card_registration_url" size=60 value={{ card_registration_URL }} />
+    </div>
+
+    <input class="baseURL" type="hidden" value={{ baseURL }} />
+    <input class="clientId" type="hidden" value={{ clientId }} />
+
+    <br/>
+    <h3>Card data:</h3>
+    <div class="form-row"><label>Card number</label>
+        <input class="card_number" type="text" value="4970100000000154" size="20" />
+    </div>
+
+    <div class="form-row">
+        <label>CVC</label>
+        <input class="card_cvx" type="text" value="123" size="4" />
+    </div>
+
+    <div class="form-row">
+        <label>Expiry Date (MMYY)</label>
+        <input class="card_exp_date" type="text" value="1220" size="4" />
+    </div>
+
+    <div class="form-row">
+        <label>card type</label>
+        <input class="card_type" type="text" value="CB_VISA_MASTERCARD" />
+    </div>
+
+    <br/>
+
+    <h2 onclick="registerCard();">Get Card ID</h2>
+    <div id="result"></div>
+
+</form>
+</body>
+</html>

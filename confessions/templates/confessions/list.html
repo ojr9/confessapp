@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Feed of deeds{% endblock %}
+
+{% block content %}
+
+All the list
+<table>
+{% for deed in deeds %}
+<tr>
+    <td>{{ deed.registered }}</td>
+    <td><a href="{% url 'user_view' deed.user.id %}">{{ deed.user.username }}</a></td>
+    <td><a href="{% url 'view_deed' deed.id %}"> {{ deed.title|truncatewords:12 }}</a></td>
+    <td>{{ deed.likes }} Likes - {{ deed.applauses }} Applauses - {{ deed.mehs }} Mehs - {{ deed.laughs }} Laughs - {{ deed.cries }} Cries </td>
+    {% if deed.user is request.user %}
+        <td><a href="{% url 'update_deed' deed.pk %}">Update</a> </td>
+    {% endif %}
+
+</tr>
+{% endfor %}
+
+</table>
+
+{% endblock %}

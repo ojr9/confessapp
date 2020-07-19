@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}{{ deed.title }}{% endblock %}
+
+{% block content %}
+{% comment %}
+    This is the interesting one. Add the person, too. Not just the deed.
+    What else, nice bootstrap?
+{% endcomment %}
+
+<h2>{{ deed.title }}</h2>
+
+<p>
+    CATEGOTY: <a href="#">{{ deed.category }}</a> - <a href="{% url 'user_view' deed.user.id %}">{{ deed.user.username }}</a>
+</p>
+<p>
+    <h3>{{ deed.title }}</h3><br>
+    <strong>Intensity level: {{ deed.intensity }}</strong> out of 5 <br>
+    <stong>The value of your actions {{ deed.user.first_name }} is: {{ deed.price }}</stong>
+{% if owner %}
+    {% if positive %} Your contribution to society is appreciated! Everybody can donate to you up to this amount{% endif %}
+    {% if neutral %} Society is undecided about the worth of your action. {% endif %}
+    {% if negative %} You have a debt to society for your behavior! <a href="#">Pay back</a> to be forgiven. {% endif %}
+{% else %}
+    {% if positive %} A well appreciated contribution to society! <a href="#">Support</a> a noble deed!{% endif %}
+    {% if neutral %} Please vote to change the value of this action. {% endif %}
+    {% if negative %} {{ deed.user.first_name }} has an outstanding debt to society for his action and hasn't paid back. {% endif %}
+{% endif %}
+<br> The amount is updated every 30 min, based on incoming votes. Remember, the more positive votes the more you can receive in donations. The more negative votes, the
+higher your debt to society is judged to be. <br>
+<table>
+{% if owner %}
+    <tr>
+        <td><a href="{% url 'update_deed' deed.id %}">Update your action</a> </td>
+
+    </tr>
+{% else %}
+    <tr>
+        Read {{ deed.user.first_name }}'s thoughts on this <a href="{{ reflection.get_absolute_url }}">HERE</a>
+        actually why not have the reflection here too?!
+
+    </tr>
+    <tr>
+        <td>Vote on what this deed - voting changes the value of this deed</td>
+    </tr>
+    <tr>
+        <td><a href="{% url 'react' deed.id 'li' %}">Like</a>  -  {{ deed.likes }}</td>
+        <td><a href="{% url 'react' deed.id 'ap' %}">Applaude</a>  -  {{ deed.applauses }}</td>
+        <td><a href="{% url 'react' deed.id 'me' %}">Meh</a>  -  {{ deed.mehs }}</td>
+        <td><a href="{% url 'react' deed.id 'la' %}">Laugh</a>  -  {{ deed.laughs }}</td>
+        <td><a href="{% url 'react' deed.id 'cr' %}">Cry</a>  -  {{ deed.cries }}</td>
+    </tr>
+{% endif %}
+</table>
+<p>
+    {{ deed.registered }}. - {{ deed.situation }}
+</p>
+<h3>Reflection</h3>
+<p>
+    {% if owner %} <a href="{% url 'update_reflection' deed.id %}">Update</a> your reflection {% endif %}
+    {{ deed.reflection }}
+</p>
+<p>
+<h3>Comments</h3>
+<form method="post">
+    {{ comment_form }}
+    {% csrf_token %}
+    <input type="submit" value="post">
+</form>
+</p>
+<p>
+{% for comment in deed.comment_set %}
+{{ comment.created }} by {{ comment.user }} <br>
+{{ comment.body }} <br>
+<a href="#"><font size="5">Report</font></a> abusive comment.
+{% endfor %}
+</p>
+{% endblock %}

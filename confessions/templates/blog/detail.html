@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}{{ deed.title }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ deed.title }}</h2>
+
+<p>
+    <h3>{{ reflection.registered }}</h3>
+</p>
+<p>
+    {{ reflection.reflection }}
+</p>
+
+<p>
+    <a href="{{ reflection.update_url }}">Uddate</a>
+    <a href="{% url 'list_deed' %}">Deeds</a>
+
+</p>
+
+
+{% endblock %}

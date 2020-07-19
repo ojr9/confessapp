@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Start dreaming here!{% endblock %}
+
+{% block content %}
+<h1>
+    Sign up here!
+</h1>
+    <p>
+        <form method="post" action=".">
+            {{ form.as_p }}
+
+            {% csrf_token %}
+            <input type="submit" value="Send">
+        </form>
+    </p>
+
+
+{% endblock %}

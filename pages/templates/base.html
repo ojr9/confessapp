@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+
+<!-- authenticated menu -->
+    klsfalskjf;alksjf;askdjflskajfdaslkfdj;askfja;skjfaskldjfsf  fs<br>
+{% if user.is_authenticated %}
+    <table>
+        <tr>
+            <td>Welcome {{ user.first_name }} ||</td>
+            <td>     </td>
+            <td><a href="{% url 'todoes' %}">Todoes</a> </td>
+            <td><a href="{% url 'bizcase' %}">Biz Case</a> </td>
+            <td><a href="{% url 'user_view' user.id %}">Profile</a> </td>
+            <td><a href="{% url 'user_edit' user.id %}">Edit Profile</a> </td>
+            <td><a href="{% url 'new_deed' %}">Confess a good or bad deed</a> </td>
+            <td><a href="{% url 'list_deed' %}">Gossip</a> </td>
+            <td><a href="{% url 'td2' %}">NEw matured to do here.</a> </td>
+            <td><a href="{% url 'purse' %}">Bank</a> </td>
+            <td><a href="{% url 'account_logout' %}">Logout</a> </td>
+        </tr>
+    </table>
+{% else %}
+    <!-- anonymous menu -->
+    <table>
+        <tr>
+            <td>Welcome !!! ||</td>
+            <td>     </td>
+            <td><a href="{% url 'todoes' %}">Todoes      </a> </td>
+            <td><a href="{% url 'account_signup' %}">Sign up         </a> </td>
+            <td><a href="{% url 'account_login' %}">Login </a> </td>
+        </tr>
+    </table>
+{% endif %}
+
+
+{% block content %}
+{% endblock %}
+</body>
+</html>

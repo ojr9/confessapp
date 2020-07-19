@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<h1>
+    Your Profile!
+</h1>
+<p>
+    <a href="{% url 'user_edit' user.id %}">Edit your profile</a><br>
+    <br>
+   Add here the list of deeds!! with teh option to see how mahny there are and to udate thenm
+
+    Also to add a donation option to make them disappear.
+
+</p>
+<p>
+    <h3>This is your new profile {{ user.first_name }}</h3>
+</p>
+change in the menu the edit link for the absolute URL method!!!
+
+
+
+There's nothing here now. for now.
+{% endblock %}
