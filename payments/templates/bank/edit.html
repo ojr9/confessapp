@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Change your bank account!{% endblock %}
+
+{% block content %}
+
+<h2>Register a new bank account. </h2>
+<p>
+This is the current account you have set to receive earnings. You can only receive money into your account if your
+    balance is positive.
+
+<form method="post" action=".">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <input type="submit" value="Register">
+</form>
+</p>
+
+
+
+{% endblock %}

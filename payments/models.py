@@ -487,7 +487,7 @@ class MangoBankAccount(models.Model):
     active = models.BooleanField()
 
     def create(self, user, line1, city, region, pc, country, line2=''):
-        self.mid = MangoUser.objects.get(user=user).mid
+        self.mid = MangoUser.objects.get(user=user)
         address = _make_address(line1, line2, city, pc, country, region)
         self.address = address
         ba = BankAccount(OwnerAddress=address, OwnerName=(str(user.first_name + user.last_name)), IBAN=self.iban,

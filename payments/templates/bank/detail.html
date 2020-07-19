@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<h2>Bank </h2>
+<h2>Wallet</h2>
 <p>
 Your current balance is:
 
@@ -15,7 +15,8 @@ Your current balance is:
     {{ bankaccounts }}
     You can also <a href="#">change</a> this bank account.
 {% else %}
-    You haven't registered any bank account yet. <a href="{% url 'new_bankaccount' %}">Register</a> one to receive your earnings.
+    You haven't registered any bank account yet.
+In order to receive your earnings, <a href="{% url 'new_bankaccount' %}">register</a> one.
 {% endif %}
 <p>
 <h4>These are the transactions you have made. </h4>
@@ -25,6 +26,8 @@ For now only Payins are shown.
     <tr>
         <td>{{ t.creation_date }}</td> | {{ t.statement_descriptor }} | {{ t.amount }} | add the author later when it makes sense.
     </tr>
+    {% empty %}
+        No transactions done. Go charge your wallet!
     {% endfor %}
 </table>
 

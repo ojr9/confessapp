@@ -14,8 +14,8 @@ from .models import MangoNaturalUser, MangoWallet, MangoWebPayIn, MangoCardDirec
     MangoEvents, MangoDDWebPayIn, MangoBankAccount, MangoCard, MangoPayIn
 from .forms import BankAccountForm
 """
-These are helper views, not to be used in the actual ones in other apps. 
-The idea is to embed objects in the views and call methods from there and the templates.
+These are helper views. The idea is to embed objects in the views and call methods from there and the templates.
+Still there are some views here that help the overall flow.
 """
 usr = get_user_model()
 
@@ -52,6 +52,17 @@ def testgetter(request):
     return HttpResponse(muser.mid)
 
 
+class BankFormView(generic.FormView):
+    form_class = BankAccountForm
+    template_name = 'bank/create.html'
+
+    def form_valid(self, form):
+        cd = form.cleaned_data
+        user = self.request.user
+        nba = MangoBankAccount(iban=cd['iban'], bic=cd['bic'])
+        nba.create(user=user, line1=cd['line1'], line2=cd['line2'], city=cd['city'], region=cd['region'],
+                           pc=cd['pc'], country=['country'])
+        return super().form_valid(form)
 
 
 class CreateBankAccount(generic.CreateView):
@@ -62,7 +73,7 @@ class CreateBankAccount(generic.CreateView):
     def form_valid(self, form):
         cd = form.cleaned_data
         user = self.request.user
-        self.object.create(user=user, line1=cd['line1'], line2=cd['line2'], city=cd['city'], region=cd['region'],
+        self.object.create(user=user.mid, line1=cd['line1'], line2=cd['line2'], city=cd['city'], region=cd['region'],
                            pc=cd['pc'], country=['country'])
         return super().form_valid(form)
 
