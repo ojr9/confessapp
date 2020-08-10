@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Deed, Collection, Comment
+from .models import Category, Deed, Comment
 from django.utils.text import slugify
 
 
@@ -13,11 +13,6 @@ class CategoryAdmin(admin.ModelAdmin):
 class DeedAdmin(admin.ModelAdmin):
     list_display = ['id', 'user', 'category', 'nature', 'registered', 'intensity', 'likes', 'applauses',
                     'mehs', 'laughs', 'cries']
-
-
-@admin.register(Collection)
-class CollectionAdmin(admin.ModelAdmin):
-    list_display = ['deed', 'price', 'update']
 
 
 @admin.register(Comment)

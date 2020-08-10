@@ -127,7 +127,7 @@ class MangoWallet(models.Model):
 
 
 class MangoCardRegistration(models.Model):
-    mid = models.ForeignKey(MangoUser, on_delete=models.PROTECT, related_name='mango_card_reg')
+    mid = models.PositiveIntegerField(default=0)
     currency = models.CharField(max_length=3, default='EUR')
     card_type = models.CharField(max_length=20, default=CARD_TYPE_CHOICES['CB_VISA_MASTERCARD'])
 
@@ -148,7 +148,7 @@ class MangoCardRegistration(models.Model):
 
 class MangoCard(models.Model):
     cid = models.PositiveIntegerField(default=0)
-    mid = models.ForeignKey(MangoUser, on_delete=models.PROTECT, related_name='mango_card')
+    mid = models.PositiveIntegerField(default=0)
     expiration_date = models.PositiveSmallIntegerField(default=0)
     currency = models.CharField(max_length=3, default='EUR')
     alias = models.CharField(max_length=20, default='')
@@ -417,7 +417,7 @@ def extra_charge_from_wallet(request):
 class MangoDocument(models.Model):
     doc_type = models.CharField(max_length=23, default='IDENTITY_PROOF')
     did = models.PositiveIntegerField(default=0)
-    mid = models.ForeignKey(MangoUser, on_delete=models.PROTECT, related_name='mango_document')
+    mid = models.PositiveIntegerField(default=0)
     creation_date = models.DateTimeField()
     processed_date = models.DateTimeField(blank=True, null=True)
     status = models.CharField(max_length=9)
@@ -472,8 +472,8 @@ class MangoUBODeclaration(models.Model):
 
 class MangoBankAccount(models.Model):
     bid = models.PositiveIntegerField()
-    mid = models.ForeignKey(MangoUser, on_delete=models.PROTECT, related_name='mango_bank_account')
-    iban = models.CharField(max_length=35)
+    mid = models.PositiveIntegerField(default=0)
+    iban = models.CharField(max_length=35, help_text="Format should be a regular Iban format")
     bic = models.CharField(max_length=20, null=True, blank=True)
     address = AddressField()
     # addressline1 = models.CharField(max_length=250)
@@ -487,11 +487,11 @@ class MangoBankAccount(models.Model):
     active = models.BooleanField()
 
     def create(self, user, line1, city, region, pc, country, line2=''):
-        self.mid = MangoUser.objects.get(user=user)
+        self.mid = MangoUser.objects.get(user=user).mid
         address = _make_address(line1, line2, city, pc, country, region)
         self.address = address
         ba = BankAccount(OwnerAddress=address, OwnerName=(str(user.first_name + user.last_name)), IBAN=self.iban,
-                         BIC=self.bic)
+                         BIC=self.bic, Type=self.bank_account_type)
         # check if I don't need a function in the user model for get_full_name
         ba.save()
         self.bid = ba.get_pk()
@@ -511,6 +511,8 @@ class MangoBankAccount(models.Model):
 class MangoPayOut(models.Model):
     poid = models.PositiveIntegerField()
     author_id = models.ForeignKey(MangoUser, on_delete=models.PROTECT, related_name='mango_payout_author_id')
+    # Should this last ID not also be an Integer? Like all the other mid, yet this might be the exception, as it links
+    # The payout to a user in the system.
     bid = models.ForeignKey(MangoBankAccount, on_delete=models.PROTECT, related_name='mango_bankaccount')
     dwid = models.ForeignKey(MangoWallet, on_delete=models.PROTECT, related_name='mango_debited_wallet_id')
     amount = models.DecimalField(max_digits=8, decimal_places=2)

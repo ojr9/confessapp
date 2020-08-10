@@ -50,6 +50,8 @@ class Deed(models.Model):
     cries = models.PositiveSmallIntegerField(default=0)
     nature = models.CharField(max_length=4, choices=(('Good', 'Good'), ('Bad', 'Bad')))
     locked = models.BooleanField(default=False)
+    price = models.IntegerField(default=1.00)
+    update = models.DateTimeField(default=timezone.now)
 
     class Meta:
         ordering = ['-registered']
@@ -75,15 +77,9 @@ class Deed(models.Model):
     def get_absolute_url(self):
         return reverse('view_deed', kwargs={'id': self.pk})
 
-
-class Collection(models.Model):
-    deed = models.OneToOneField(Deed, on_delete=models.CASCADE, related_name='collection')
-    price = models.IntegerField(default=1.00)
-    update = models.DateTimeField(default=timezone.now)
-
     def _price_date(self):
-        votes = {'likes': self.deed.likes, 'applauses': self.deed.applauses, 'mehs': self.deed.mehs,
-                 'laughs': self.deed.laughs, 'cries': self.deed.cries}
+        votes = {'likes': self.likes, 'applauses': self.applauses, 'mehs': self.mehs, 'laughs': self.laughs,
+                 'cries': self.cries}
         value = round((votes['likes'] + votes['applauses']*2 - votes['mehs']*0.5 - votes['laughs']
                              - votes['cries']*2), 2)
         print(value, self.price)
@@ -96,9 +92,6 @@ class Collection(models.Model):
             self._price_date()
             return self
         return None
-
-    def __str__(self):
-        return f'{self.pk} Collection for {self.deed}'
 
 
 class Comment(models.Model):

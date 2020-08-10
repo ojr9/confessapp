@@ -4,7 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 
-from .models import Deed, Category, Collection, Comment
+from .models import Deed, Category, Comment
 from .forms import NewDeedForm, CommentForm, ReflectionForm
 
 
@@ -27,7 +27,6 @@ class NewDeed(LoginRequiredMixin, View):
         if form.is_valid():
             form.instance.user = request.user
             form.save()
-            Collection.objects.create(deed=form.instance)
             return render(request, 'confessions/detail.html', {'deed': form.instance})
 
 
@@ -41,13 +40,11 @@ class ViewDeed(LoginRequiredMixin, DetailView):
         context = super(ViewDeed, self).get_context_data()
         if self.object.user == self.request.user:
             context['owner'] = True
-        coll = Collection.objects.get(deed=self.object)
-        coll.price_update()
-        context['collection'] = coll
+        self.object.price_update()
         context['comment_form'] = CommentForm()
-        if coll.price > 0:
+        if self.object.price > 0:
             context['positive'] = True
-        elif coll.price == 0:
+        elif self.object.price == 0:
             context['neutral'] = True
         else:
             context['negative'] = True
